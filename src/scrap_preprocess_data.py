@@ -91,11 +91,8 @@ def fetch_financial_data(tickers, start_date, end_date, data_dir='F:/Time-Series
 
     print(f"Data fetched successfully for {len(adj_close.columns)} tickers.")
     return adj_close, volume
-# %% [markdown]
-# ## Cell 4: Define Missing Values Handling Function
-# Handle missing values using forward and backward fill.
 
-# %% [code]
+
 def handle_missing_values(adj_close, volume,df):
     """
     Handle missing values in data using forward and backward fill.
@@ -132,11 +129,8 @@ def handle_missing_values(adj_close, volume,df):
     print(df.isna().sum())
     return adj_close, volume, df
 
-# %% [markdown]
-# ## Cell 5: Define EDA Function (Visualizations)
-# Perform exploratory data analysis with visualizations.
 
-# %% [code]
+### Cell 5: Define EDA Function (Visualizations)
 def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     """
     Perform Exploratory Data Analysis with visualizations.
@@ -159,10 +153,6 @@ def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     rolling_std : DataFrame
         30-day rolling std of returns.
     """
-    if adj_close is None:
-        print("Error: No Adjusted Close data provided for EDA.")
-        return None, None, None
-    
     # Create output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -177,7 +167,7 @@ def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     plt.legend()
     plt.grid()
     plt.savefig(f'{output_dir}/adj_close_prices.png')
-    plt.close()
+    plt.show()
     
     # Calculate and plot daily returns
     daily_returns = adj_close.pct_change().dropna()
@@ -190,7 +180,7 @@ def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     plt.legend()
     plt.grid()
     plt.savefig(f'{output_dir}/daily_returns.png')
-    plt.close()
+    plt.show()
     
     # Calculate and plot 30-day rolling volatility
     rolling_window = 30
@@ -206,15 +196,11 @@ def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     plt.legend()
     plt.grid()
     plt.savefig(f'{output_dir}/rolling_volatility.png')
-    plt.close()
+    plt.show()
     
     return daily_returns, rolling_mean, rolling_std
 
-# %% [markdown]
-# ## Cell 6: Define Outlier Detection Function
-# Detect outliers in daily returns.
 
-# %% [code]
 def outlier_detection(daily_returns, tickers):
     """
     Detect outliers in daily returns.
@@ -254,11 +240,7 @@ def outlier_detection(daily_returns, tickers):
     
     return outliers, means, stds
 
-# %% [markdown]
-# ## Cell 7: Define Stationarity Test Function
-# Perform Augmented Dickey-Fuller test for stationarity.
 
-# %% [code]
 def stationarity_test(adj_close, daily_returns, tickers):
     """
     Perform Augmented Dickey-Fuller test for stationarity.
@@ -302,11 +284,7 @@ def stationarity_test(adj_close, daily_returns, tickers):
     
     return stationarity_results
 
-# %% [markdown]
-# ## Cell 8: Define Risk Metrics Function
-# Calculate Value at Risk and Sharpe Ratio.
 
-# %% [code]
 def risk_metrics(daily_returns, tickers, risk_free_rate=0.02):
     """
     Calculate Value at Risk and Sharpe Ratio.
@@ -353,11 +331,7 @@ def risk_metrics(daily_returns, tickers, risk_free_rate=0.02):
     
     return risk_metrics_df
 
-# %% [markdown]
-# ## Cell 9: Define Insights and Documentation Function
-# Generate and document dynamic insights.
 
-# %% [code]
 def insights_and_documentation(adj_close, daily_returns, rolling_mean, rolling_std, stationarity_results, outliers, risk_metrics_df, output_dir='plots', tickers=None):
     """
     Generate and document dynamic insights.
