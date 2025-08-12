@@ -402,10 +402,14 @@ def insights_and_documentation(adj_close, daily_returns, rolling_mean, rolling_s
     insights.append("Stationarity Implications: Non-stationary series may require differencing for ARIMA modeling.")
     
     # Save insights to a text file
-    with open(f'{output_dir}/eda_insights.txt', 'w') as f:
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    insights_file = f'{output_dir}/insights.txt'
+    with open(insights_file, 'w') as f:
         for insight in insights:
             f.write(insight + '\n')
-    
+    print(f"Insights saved to {insights_file}")
+   
     # Return results
     return {
         'adj_close': adj_close,
