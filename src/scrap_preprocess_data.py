@@ -171,6 +171,9 @@ def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     
     # Calculate and plot daily returns
     daily_returns = adj_close.pct_change().dropna()
+    #daily_returns = daily_returns * 100  # Convert to percentage
+    #daily_returns.columns = [f"{ticker} Daily Return (%)" for ticker in tickers]
+    daily_returns.to_csv(f'{output_dir}/daily_returns.csv')
     plt.figure(figsize=(12, 6))
     for ticker in tickers:
         plt.plot(daily_returns.index, daily_returns[ticker], label=ticker, alpha=0.6)
@@ -186,6 +189,9 @@ def eda_data_analysis(adj_close, tickers, output_dir='plots'):
     rolling_window = 30
     rolling_mean = daily_returns.rolling(window=rolling_window).mean()
     rolling_std = daily_returns.rolling(window=rolling_window).std()
+    # to save the rolling mean and std
+    rolling_mean.to_csv(f'{output_dir}/rolling_mean.csv')
+    rolling_std.to_csv(f'{output_dir}/rolling_std.csv')
     
     plt.figure(figsize=(12, 6))
     for ticker in tickers:
