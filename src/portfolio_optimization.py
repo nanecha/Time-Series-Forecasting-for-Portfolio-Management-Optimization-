@@ -15,7 +15,7 @@ CONFIG = {
     "spy_hist_csv":  "F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/scrap data/SPY_data.csv",
 
     # Path to TSLA forecast results (from Task 3)
-    "tsla_forecast_csv": "F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/output/data/output/tesla_forecast_6months.csv",  # columns: Forecast, Lower, Upper
+    "tsla_forecast_csv": "F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/output/arima_forecast (1).csv",  # columns: Forecast, Lower, Upper
 
     # Columns
     "date_col": "Date",
@@ -79,9 +79,12 @@ def load_tsla_expected_return_from_forecast(cfg=CONFIG):
 
     df = pd.read_csv(path)
     # Detect date column or index
-    if cfg["date_col"] in df.columns:
-        df[cfg["date_col"]] = pd.to_datetime(df[cfg["date_col"]])
-        df = df.set_index(cfg["date_col"])
+    df[cfg["date_col"]] = pd.to_datetime(df[cfg["date_col"]], format="mixed", dayfirst=True, errors="coerce")
+
+
+    #if cfg["date_col"] in df.columns:
+        #df[cfg["date_col"]] = pd.to_datetime(df[cfg["date_col"]])
+        #df = df.set_index(cfg["date_col"])
 
     if "Forecast" not in df.columns:
         raise ValueError("Forecast column missing in TSLA forecast CSV. Expected columns: ['Forecast','Lower','Upper'].")
