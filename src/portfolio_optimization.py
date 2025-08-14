@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # -----------------------------
 # 0) Config
-# -----------------------------
+# ------------------------
 CONFIG = {
     # Paths to historical CSVs (from Task 1)
     "tsla_hist_csv": "F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/scrap data/TSLA_data.csv",
