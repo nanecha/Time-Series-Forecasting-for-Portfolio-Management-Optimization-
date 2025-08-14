@@ -88,6 +88,7 @@ def load_tsla_expected_return_from_forecast(cfg=CONFIG):
 
     forecast = df["Forecast"].astype(float)
     # Daily returns inside the forecast horizon
+    forecast = forecast.ffill()  # fill NaNs forward
     daily_ret = forecast.pct_change().dropna()
     if daily_ret.empty:
         # Fallback: use last forecast against first forecast (coarse)
