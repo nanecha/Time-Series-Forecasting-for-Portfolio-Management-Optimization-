@@ -1,4 +1,4 @@
-```python
+# dependencies
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -36,22 +36,31 @@ def load_data(tsla_path, bnd_path, spy_path, portfolio_summary_path, start_date=
             df = pd.read_csv(path)
             df['Date'] = pd.to_datetime(df['Date'])
             df.set_index('Date', inplace=True)
-            historical_data[asset] = df['Adj Close'][start_date:end_date].fillna(method='ffill').fillna(method='bfill')
+            historical_data[asset] = df['Close'][start_date:end_date].bfill().ffill()
+
         
         # Compute daily returns
         returns = historical_data.pct_change().dropna()
         
         # Load Task 4 weights
         with open(portfolio_summary_path, 'r') as f:
-            lines = f.readlines()
-            for line in lines:
-                if line.startswith('Weights:'):
-                    weights_lines = lines[lines.index(line)+1:lines.index(line)+4]
-                    strategy_weights = np.array([float(line.split(':')[1].split('(')[0]) for line in weights_lines])
-                    break
-        else:
+            lines = [line.strip() for line in f.readlines()]
+
+        strategy_weights = None
+
+        for i, line in enumerate(lines):
+            if line.startswith("Recommended Portfolio:"):
+        # Look for lines starting with 'w_'
+                weights_lines = [l for l in lines[i:] if l.startswith("w_")]
+                strategy_weights = np.array([float(l.split(":")[1].strip().replace("%", "")) / 100 for l in weights_lines])
+                break
+
+        if strategy_weights is None:
             raise ValueError("Weights not found in task4_portfolio_summary.txt")
-        
+
+        print("Extracted weights:", strategy_weights)
+
+    
         # Define benchmark weights (0% TSLA, 40% BND, 60% SPY)
         benchmark_weights = np.array([0.0, 0.4, 0.6])
         
@@ -94,6 +103,7 @@ def simulate_portfolio(returns, weights):
     cumulative_returns = (1 + portfolio_returns).cumprod() - 1
     return portfolio_returns, cumulative_returns
 
+
 def calculate_metrics(portfolio_returns, risk_free_rate=0.03/252):
     """
     Calculate annualized Sharpe Ratio and total return.
@@ -117,6 +127,7 @@ def calculate_metrics(portfolio_returns, risk_free_rate=0.03/252):
     sharpe_ratio = (annualized_return - (risk_free_rate * 252)) / annualized_volatility
     total_return = (1 + portfolio_returns).prod() - 1
     return sharpe_ratio, total_return
+
 
 def plot_cumulative_returns(strategy_cumulative, benchmark_cumulative, output_dir='plots/backtesting'):
     """
@@ -143,11 +154,12 @@ def plot_cumulative_returns(strategy_cumulative, benchmark_cumulative, output_di
         plt.legend()
         plt.grid()
         plt.savefig(f'{output_dir}/task5_cumulative_returns.png')
-        plt.close()
+        plt.show()
         
         print(f"Cumulative returns plot saved to {output_dir}/task5_cumulative_returns.png")
     except Exception as e:
         print(f"Error plotting cumulative returns: {e}")
+
 
 def summarize_performance(strategy_metrics, benchmark_metrics, output_dir='data/output'):
     """
@@ -206,40 +218,6 @@ def summarize_performance(strategy_metrics, benchmark_metrics, output_dir='data/
         print(f"Error summarizing performance: {e}")
         return None
 
-def main():
-    """
-    Main function to execute Task 5 backtesting.
-    """
-    # Parameters
-    tsla_path = 'F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/TSLA_data.csv'
-    bnd_path = 'F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/BND_data.csv'
-    spy_path = 'F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/SPY_data.csv'
-    portfolio_summary_path = 'F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/output/task4_portfolio_summary.txt'
-    start_date = '2024-08-01'
-    end_date = '2025-07-31'
-    output_dir = 'data/output'
-    plot_dir = 'plots/backtesting'
-    risk_free_rate = 0.03 / 252  # Daily risk-free rate
-    
-    # Load data and weights
-    returns, strategy_weights, benchmark_weights = load_data(tsla_path, bnd_path, spy_path, portfolio_summary_path, start_date, end_date)
-    if returns is None:
-        return
-    
-    # Simulate portfolios
-    strategy_returns, strategy_cumulative = simulate_portfolio(returns, strategy_weights)
-    benchmark_returns, benchmark_cumulative = simulate_portfolio(returns, benchmark_weights)
-    
-    # Calculate metrics
-    strategy_metrics = calculate_metrics(strategy_returns, risk_free_rate)
-    benchmark_metrics = calculate_metrics(benchmark_returns, risk_free_rate)
-    
-    # Plot cumulative returns
-    plot_cumulative_returns(strategy_cumulative, benchmark_cumulative, plot_dir)
-    
-    # Summarize performance
-    summarize_performance(strategy_metrics, benchmark_metrics, output_dir)
 
 if __name__ == "__main__":
-    main()
-```
+    pass
