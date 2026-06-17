@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-def fetch_financial_data(tickers, start_date, end_date, data_dir='F:/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data/scrap data'):
+def fetch_financial_data(tickers, start_date, end_date, data_dir='E:/project 2026/Time-Series-Forecasting-for-Portfolio-Management-Optimization-/data'):
     """
     Fetch financial data for given tickers using YFinance and save to CSV.
     
